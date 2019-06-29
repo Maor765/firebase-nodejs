@@ -3,3 +3,5 @@ https://dev.to/levivm/creating-a-serverless-rest-api-using-google-cloud-function
 google key words
 
 create restful api express firebase
+
+https://nodejs-firebase-2e5d2.firebaseapp.com/api/v1/fights
