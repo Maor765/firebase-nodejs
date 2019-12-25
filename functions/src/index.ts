@@ -18,129 +18,130 @@ app.get('/warmup', (request, response) => {
     response.send('Warming up friend.');
 })
 
-app.post('/fights', async (request, response) => {
+app.post('/secrets', async (request, response) => {
     try {
-      const { winner, losser, title } = request.body;
+      const { name, allowExport, text } = request.body;
       const data = {
-        winner,
-        losser,
-        title
-      } 
-      const fightRef = await db.collection('fights').add(data);
-      const fight = await fightRef.get();
-  
-      response.json({
-        id: fightRef.id,
-        data: fight.data()
-      });
-  
-    } catch(error){
-  
-      response.status(500).send(error);
-  
-    }
-  });
-  
-  app.get('/fights/:id', async (request, response) => {
-    try {
-      const fightId = request.params.id;
-  
-      if (!fightId) throw new Error('Fight ID is required');
-  
-      const fight = await db.collection('fights').doc(fightId).get();
-  
-      if (!fight.exists){
-          throw new Error('Fight doesnt exist.')
+        name,
+        allowExport,
+        text,
+        createdAt:new Date().toString()
       }
-  
+      const secretRef = await db.collection('secrets').add(data);
+      const fight = await secretRef.get();
+
       response.json({
-        id: fight.id,
-        data: fight.data()
+        id: secretRef.id,
+        ...fight.data()
       });
-  
+
     } catch(error){
-  
+
       response.status(500).send(error);
-  
+
     }
   });
-  
-  app.get('/fights', async (request, response) => {
+
+  app.get('/secrets/:id', async (request, response) => {
     try {
-  
-      const fightQuerySnapshot = await db.collection('fights').get();
-      const fights: any[] | { id: string; data: FirebaseFirestore.DocumentData; }[] = [];
+      const secretId = request.params.id;
+
+      if (!secretId) throw new Error('Secret ID is required');
+
+      const secret = await db.collection('secrets').doc(secretId).get();
+
+      if (!secret.exists){
+          throw new Error('Secret doesnt exist.')
+      }
+
+      response.json({
+        id: secret.id,
+        ...secret.data()
+      });
+
+    } catch(error){
+
+      response.status(500).send(error);
+
+    }
+  });
+
+  app.get('/secrets', async (request, response) => {
+    try {
+
+      const fightQuerySnapshot = await db.collection('secrets').get();
+      const secrets: any[] = [];
       fightQuerySnapshot.forEach(
           (doc) => {
-              fights.push({
+            secrets.push({
                   id: doc.id,
-                  data: doc.data()
+                  ...doc.data()
               });
           }
       );
-  
-      response.json(fights);
-  
+
+      response.json(secrets);
+
     } catch(error){
-  
+
       response.status(500).send(error);
-  
+
     }
-  
+
   });
-  
-  app.put('/fights/:id', async (request, response) => {
+
+  app.put('/secrets/:id', async (request, response) => {
     try {
-  
-      const fightId = request.params.id;
-      const title = request.body.title;
-  
-      if (!fightId) throw new Error('id is blank');
-  
-      if (!title) throw new Error('Title is required');
-  
-      const data = { 
-          title
+
+      const secretId = request.params.id;
+      const text = request.body.text;
+
+      if (!secretId) throw new Error('id is blank');
+
+      if (!text) throw new Error('Text is required');
+
+      const data = {
+        text
       };
 
-     await db.collection('fights')
-          .doc(fightId)
+     await db.collection('secrets')
+          .doc(secretId)
           .set(data, { merge: true });
-  
+
       response.json({
-          id: fightId,
-          data
+          id: secretId,
+          ...data
       })
-  
-  
+
+
     } catch(error){
-  
+
       response.status(500).send(error);
-  
+
     }
-  
+
   });
-  
-  app.delete('/fights/:id', async (request, response) => {
+
+  app.delete('/secrets/:id', async (request, response) => {
     try {
-  
-      const fightId = request.params.id;
-  
-      if (!fightId) throw new Error('id is blank');
-  
-      await db.collection('fights')
-          .doc(fightId)
+
+      const secretId = request.params.id;
+
+      if (!secretId) throw new Error('id is blank');
+
+      await db.collection('secrets')
+          .doc(secretId)
           .delete();
-  
+
       response.json({
-          id: fightId,
+          id: secretId,
       })
-  
-  
+
+
     } catch(error){
-  
+
       response.status(500).send(error);
-  
+
     }
-  
+
   });
