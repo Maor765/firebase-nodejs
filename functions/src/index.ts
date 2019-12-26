@@ -14,10 +14,6 @@ export const webApi = functions.https.onRequest(main);
 admin.initializeApp(functions.config().firebase);
 const db = admin.firestore(); // Add this
 
-app.get('/warmup', (request, response) => {
-    response.send('Warming up friend.');
-})
-
 app.post('/secrets', async (request, response) => {
     try {
       const { name, allowExport, text } = request.body;
@@ -28,11 +24,11 @@ app.post('/secrets', async (request, response) => {
         createdAt:new Date().toString()
       }
       const secretRef = await db.collection('secrets').add(data);
-      const fight = await secretRef.get();
+      const refData = await secretRef.get();
 
       response.json({
         id: secretRef.id,
-        ...fight.data()
+        ...refData.data()
       });
 
     } catch(error){
@@ -69,9 +65,9 @@ app.post('/secrets', async (request, response) => {
   app.get('/secrets', async (request, response) => {
     try {
 
-      const fightQuerySnapshot = await db.collection('secrets').get();
+      const secretQuerySnapshot = await db.collection('secrets').get();
       const secrets: any[] = [];
-      fightQuerySnapshot.forEach(
+      secretQuerySnapshot.forEach(
           (doc) => {
             secrets.push({
                   id: doc.id,
