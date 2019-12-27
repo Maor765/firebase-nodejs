@@ -14,6 +14,26 @@ export const webApi = functions.https.onRequest(main);
 admin.initializeApp(functions.config().firebase);
 const db = admin.firestore(); // Add this
 
+app.use(function (req, res, next) {
+  /*var err = new Error('Not Found');
+   err.status = 404;
+   next(err);*/
+
+  // Website you wish to allow to connect
+  res.setHeader('Access-Control-Allow-Origin', '*');
+
+  // Request methods you wish to allow
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+  // Request headers you wish to allow
+  res.setHeader('Access-Control-Allow-Headers', 'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers,X-Access-Token,XKey,Authorization');
+
+//  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+
+  // Pass to next layer of middleware
+  next();
+});
+
 app.post('/secrets', async (request, response) => {
     try {
       const { name, allowExport, text } = request.body;
@@ -33,7 +53,7 @@ app.post('/secrets', async (request, response) => {
 
     } catch(error){
 
-      response.status(500).send(error);
+      response.status(500).send({serverError:error.message});
 
     }
   });
@@ -57,7 +77,7 @@ app.post('/secrets', async (request, response) => {
 
     } catch(error){
 
-      response.status(500).send(error);
+      response.status(500).send({serverError:error.message});
 
     }
   });
@@ -80,7 +100,7 @@ app.post('/secrets', async (request, response) => {
 
     } catch(error){
 
-      response.status(500).send(error);
+      response.status(500).send({serverError:error.message});
 
     }
 
@@ -91,13 +111,16 @@ app.post('/secrets', async (request, response) => {
 
       const secretId = request.params.id;
       const text = request.body.text;
+      const name = request.body.name;
 
       if (!secretId) throw new Error('id is blank');
 
       if (!text) throw new Error('Text is required');
 
+      if (!name) throw new Error('Name is required');
+
       const data = {
-        text
+        text,name
       };
 
      await db.collection('secrets')
@@ -112,7 +135,7 @@ app.post('/secrets', async (request, response) => {
 
     } catch(error){
 
-      response.status(500).send(error);
+      response.status(500).send({serverError:error.message});
 
     }
 
@@ -136,7 +159,23 @@ app.post('/secrets', async (request, response) => {
 
     } catch(error){
 
-      response.status(500).send(error);
+      response.status(500).send({serverError:error.message});
+
+    }
+
+  });
+
+  app.get('/secretKey', async (request, response) => {
+    try {
+
+      response.json({
+        secretKey: 'maor765',
+      })
+
+
+    } catch(error){
+
+      response.status(500).send({serverError:error.message});
 
     }
 
