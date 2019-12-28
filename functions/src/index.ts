@@ -12,6 +12,18 @@ main.use(bodyParser.json());
 export const webApi = functions.https.onRequest(main);
 
 admin.initializeApp(functions.config().firebase);
+
+// RUN Firebase locally
+
+// const firebaseKeys = require('./../nodejs-firebase-key');
+// admin.initializeApp({
+//   credential: admin.credential.cert({
+//       projectId: firebaseKeys.project_id,
+//       clientEmail: firebaseKeys.client_email,
+//       privateKey: firebaseKeys.private_key
+//   })
+// });
+
 const db = admin.firestore(); // Add this
 
 app.use(function (req, res, next) {
@@ -160,9 +172,7 @@ app.post('/secrets', async (request, response) => {
     } catch(error){
 
       response.status(500).send({serverError:error.message});
-
     }
-
   });
 
   app.get('/secretKey', async (request, response) => {
@@ -172,11 +182,8 @@ app.post('/secrets', async (request, response) => {
         secretKey: 'maor765',
       })
 
-
     } catch(error){
-
       response.status(500).send({serverError:error.message});
-
     }
 
   });
