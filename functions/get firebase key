@@ -1,0 +1,23 @@
+https://console.cloud.google.com/iam-admin/serviceaccounts/details/117226815649028542600;edit=true?authuser=1&project=nodejs-firebase-2e5d2
+
+
+
+How to do it:
+
+Go to Google-cloud-platform > Service accounts https://console.cloud.google.com/iam-admin/serviceaccounts/
+
+Select your project
+
+Select your firebase-admin-sdk looks like firebase-adminsdk-u4k3i@example..
+Enable edit mode
+Create key and select JSON
+You get the option to download a .json. Which has ProjectID, PrivateKey and ClientEmail in it
+use the information like this where you initialize your app:
+// Providing a service account object inline
+admin.initializeApp({
+    credential: admin.credential.cert({
+        projectId: "<PROJECT_ID>",
+        clientEmail: "foo@<PROJECT_ID>.iam.gserviceaccount.com",
+        privateKey: "-----BEGIN PRIVATE KEY-----<KEY>-----END PRIVATE KEY-----\n"
+    })
+});
