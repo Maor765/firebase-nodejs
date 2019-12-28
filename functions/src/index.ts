@@ -14,7 +14,7 @@ export const webApi = functions.https.onRequest(main);
 admin.initializeApp(functions.config().firebase);
 
 // RUN Firebase locally
-
+// http://localhost:5000/nodejs-firebase-2e5d2/us-central1/webApi/api/v1/secrets
 // const firebaseKeys = require('./../nodejs-firebase-key');
 // admin.initializeApp({
 //   credential: admin.credential.cert({
